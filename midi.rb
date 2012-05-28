@@ -6,23 +6,23 @@
 #
 # MIDI Format class
 #
-#=begin
+
 require 'bio/db'
 require 'bio/sequence'
 require 'bio/sequence/dblink'
 require 'bio/db/fasta/defline'
 require 'bio/db/fasta'
-#=end
+
 module Bio
 	class MidiFormat < FastaFormat
 
 		attr_reader :aa_first_pos, :aa_second_pos, :aa_third_pos, :midi_table, :midi_data, :tempo, :track_data
-		attr_writer :tempo
+		attr_writer :tempo, :midi_table
 
 		def initialize(str)
 			super(str)
 
-			@tempo = 77 # will be up to the user.
+			@tempo = 77 # must not be above 80 right now.
 
 			@midi_table = Hash.new
 			@na_hash = Hash.new
@@ -57,6 +57,7 @@ module Bio
 			@aa_third_pos = nas.translate(3).to_s.strip
 		end
 
+=begin
 		# Method: create_midi_hash
 		# => Creates a hash of hashes so a midi number can be
 		# indexed by its associated nucleic acid and amino
@@ -72,12 +73,248 @@ module Bio
 			g_hash = Hash.new
 
 			# Fill amino hashes
-			@amino_array.each_index{|index|
-				a_hash[@amino_array[index]] = decimal_to_hex(index + 44)
-				c_hash[@amino_array[index]] = decimal_to_hex(index + 48)
-				t_hash[@amino_array[index]] = decimal_to_hex(index + 52)
-				g_hash[@amino_array[index]] = decimal_to_hex(index + 56)
+			@amino_array.each{|amino|
+				if amino == 'F'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'L'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(80)
+					t_hash[amino] = decimal_to_hex(51)
+					g_hash[amino] = decimal_to_hex(65)
+				elsif amino == 'I'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'M'
+					a_hash[amino] = decimal_to_hex(36)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(55)
+					g_hash[amino] = decimal_to_hex(76)
+				elsif amino == 'V'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(58)
+					g_hash[amino] = decimal_to_hex(39)
+				elsif amino == 'S'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'P'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'T'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'A'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'Y'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'H'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'Q'
+					a_hash[amino] = decimal_to_hex(91)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(39)
+				elsif amino == 'N'
+					a_hash[amino] = decimal_to_hex(56)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(96)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'K'
+					a_hash[amino] = decimal_to_hex(32)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(61)
+				elsif amino == 'D'
+					a_hash[amino] = decimal_to_hex(59)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(74)
+					g_hash[amino] = decimal_to_hex(43)
+				elsif amino == 'E'
+					a_hash[amino] = decimal_to_hex(103)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(27)
+				elsif amino == 'C'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(53)
+					t_hash[amino] = decimal_to_hex(77)
+					g_hash[amino] = decimal_to_hex(33)
+				elsif amino == 'W'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(37)
+					g_hash[amino] = decimal_to_hex(67)
+				elsif amino == 'R'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(60)
+					g_hash[amino] = decimal_to_hex(60)
+				elsif amino == 'G'
+					a_hash[amino] = decimal_to_hex(78)
+					c_hash[amino] = decimal_to_hex(69)
+					t_hash[amino] = decimal_to_hex(66)
+					g_hash[amino] = decimal_to_hex(38)
+				elsif amino == '*'
+					a_hash[amino] = decimal_to_hex(72)
+					c_hash[amino] = decimal_to_hex(60)
+					t_hash[amino] = decimal_to_hex(48)
+					g_hash[amino] = decimal_to_hex(60)
+				end
 			}
+
+
+			# Place amino hashes in midi_table
+			@midi_table['A'] = a_hash
+			@midi_table['C'] = c_hash
+			@midi_table['T'] = t_hash
+			@midi_table['G'] = g_hash
+		end
+=end
+
+		# Method: create_midi_hash
+		# => Creates a hash of hashes so a midi number can be
+		# indexed by its associated nucleic acid and amino
+		# acid. Ex. @midi_table['T']['R'] = 62
+		def create_midi_table
+			# Array of all the amino acids
+			@amino_array = ['F','L','I','M','V','S','P','T','A','Y','H','Q','N','K','D','E','C','W','R','G', '*']
+
+			# Initialize Hashes
+			a_hash = Hash.new
+			c_hash = Hash.new
+			t_hash = Hash.new
+			g_hash = Hash.new
+
+			# Fill amino hashes
+			@amino_array.each{|amino|
+				if amino == 'F'
+					a_hash[amino] = decimal_to_hex(86)
+					c_hash[amino] = decimal_to_hex(86)
+					t_hash[amino] = decimal_to_hex(34)
+					g_hash[amino] = decimal_to_hex(34)
+				elsif amino == 'L'
+					a_hash[amino] = decimal_to_hex(96)
+					c_hash[amino] = decimal_to_hex(36)
+					t_hash[amino] = decimal_to_hex(52)
+					g_hash[amino] = decimal_to_hex(79)
+				elsif amino == 'I'
+					a_hash[amino] = decimal_to_hex(28)
+					c_hash[amino] = decimal_to_hex(95)
+					t_hash[amino] = decimal_to_hex(56)
+					g_hash[amino] = decimal_to_hex(56)
+				elsif amino == 'M'
+					a_hash[amino] = decimal_to_hex(37)
+					c_hash[amino] = decimal_to_hex(58)
+					t_hash[amino] = decimal_to_hex(91)
+					g_hash[amino] = decimal_to_hex(58)
+				elsif amino == 'V'
+					a_hash[amino] = decimal_to_hex(84)
+					c_hash[amino] = decimal_to_hex(69)
+					t_hash[amino] = decimal_to_hex(53)
+					g_hash[amino] = decimal_to_hex(38)
+				elsif amino == 'S'
+					a_hash[amino] = decimal_to_hex(52)
+					c_hash[amino] = decimal_to_hex(98)
+					t_hash[amino] = decimal_to_hex(31)
+					g_hash[amino] = decimal_to_hex(77)
+				elsif amino == 'P'
+					a_hash[amino] = decimal_to_hex(60)
+					c_hash[amino] = decimal_to_hex(45)
+					t_hash[amino] = decimal_to_hex(76)
+					g_hash[amino] = decimal_to_hex(103)
+				elsif amino == 'T'
+					a_hash[amino] = decimal_to_hex(40)
+					c_hash[amino] = decimal_to_hex(48)
+					t_hash[amino] = decimal_to_hex(64)
+					g_hash[amino] = decimal_to_hex(93)
+				elsif amino == 'A'
+					a_hash[amino] = decimal_to_hex(108)
+					c_hash[amino] = decimal_to_hex(54)
+					t_hash[amino] = decimal_to_hex(81)
+					g_hash[amino] = decimal_to_hex(26)
+				elsif amino == 'Y'
+					a_hash[amino] = decimal_to_hex(55)
+					c_hash[amino] = decimal_to_hex(87)
+					t_hash[amino] = decimal_to_hex(24)
+					g_hash[amino] = decimal_to_hex(87)
+				elsif amino == 'H'
+					a_hash[amino] = decimal_to_hex(62)
+					c_hash[amino] = decimal_to_hex(43)
+					t_hash[amino] = decimal_to_hex(94)
+					g_hash[amino] = decimal_to_hex(94)
+				elsif amino == 'Q'
+					a_hash[amino] = decimal_to_hex(68)
+					c_hash[amino] = decimal_to_hex(29)
+					t_hash[amino] = decimal_to_hex(99)
+					g_hash[amino] = decimal_to_hex(99)
+				elsif amino == 'N'
+					a_hash[amino] = decimal_to_hex(50)
+					c_hash[amino] = decimal_to_hex(55)
+					t_hash[amino] = decimal_to_hex(80)
+					g_hash[amino] = decimal_to_hex(80)
+				elsif amino == 'K'
+					a_hash[amino] = decimal_to_hex(32)
+					c_hash[amino] = decimal_to_hex(32)
+					t_hash[amino] = decimal_to_hex(75)
+					g_hash[amino] = decimal_to_hex(75)
+				elsif amino == 'D'
+					a_hash[amino] = decimal_to_hex(67)
+					c_hash[amino] = decimal_to_hex(106)
+					t_hash[amino] = decimal_to_hex(106)
+					g_hash[amino] = decimal_to_hex(27)
+				elsif amino == 'E'
+					a_hash[amino] = decimal_to_hex(101)
+					c_hash[amino] = decimal_to_hex(101)
+					t_hash[amino] = decimal_to_hex(25)
+					g_hash[amino] = decimal_to_hex(25)
+				elsif amino == 'C'
+					a_hash[amino] = decimal_to_hex(104)
+					c_hash[amino] = decimal_to_hex(104)
+					t_hash[amino] = decimal_to_hex(35)
+					g_hash[amino] = decimal_to_hex(82)
+				elsif amino == 'W'
+					a_hash[amino] = decimal_to_hex(48)
+					c_hash[amino] = decimal_to_hex(105)
+					t_hash[amino] = decimal_to_hex(48)
+					g_hash[amino] = decimal_to_hex(105)
+				elsif amino == 'R'
+					a_hash[amino] = decimal_to_hex(57)
+					c_hash[amino] = decimal_to_hex(41)
+					t_hash[amino] = decimal_to_hex(72)
+					g_hash[amino] = decimal_to_hex(88)
+				elsif amino == 'G'
+					a_hash[amino] = decimal_to_hex(100)
+					c_hash[amino] = decimal_to_hex(61)
+					t_hash[amino] = decimal_to_hex(61)
+					g_hash[amino] = decimal_to_hex(21)
+				elsif amino == '*'
+					a_hash[amino] = decimal_to_hex(46)
+					c_hash[amino] = decimal_to_hex(85)
+					t_hash[amino] = decimal_to_hex(30)
+					g_hash[amino] = decimal_to_hex(85)
+				end
+			}
+
 
 			# Place amino hashes in midi_table
 			@midi_table['A'] = a_hash
@@ -111,7 +348,7 @@ module Bio
 		# Method: compute_midi_data
 		# => Pulls the midi notes out of midi_table and puts them
 		# in an array of arrays.
-		def compute_midi_notes
+		def compute_midi_notes_old
 
 			# Go through each letter of the na sequence and
 			# compare it to all possible amino acids.
@@ -198,6 +435,35 @@ module Bio
 			end
 		end # might need a new algorithm :(
 
+		def compute_midi_notes
+			
+			amino_string = ""
+			index = 0
+
+			# Create a string of aminos
+			for i in 0 ... (@aa_first_pos.size - 1) 
+				amino_string << @aa_first_pos[i]
+				amino_string << @aa_second_pos[i]
+				amino_string << @aa_third_pos[i]
+			end
+
+			@data.lstrip.split("").each do |i|
+				if i =~ /[ACTG]/ # check to see if the char is A C T or G
+					if amino_string[index] != nil
+						@midi_notes[0].push(@midi_table[i][amino_string[index].chr])
+					end
+					if amino_string[index-1] != nil
+						@midi_notes[1].push(@midi_table[i][amino_string[index-1].chr])
+					end
+					if amino_string[index-2] != nil
+						@midi_notes[2].push(@midi_table[i][amino_string[index-2].chr])
+					end
+					index = index + 1
+				end
+			end
+
+		end
+
 		# Method: display_midi_notes
 		# => Prints out the midi notes from the midi_note array.
 		# The first row is of notes computed from aa_first_posion
@@ -266,21 +532,32 @@ module Bio
 			@track_data[track] = "" # Initialize it to be a string
 
 			if track == 0
-				for i in 0 ... (@midi_notes[track].size - 3)
+				for i in 0 ... (@midi_notes[track].size)
 					@track_data[track] = @track_data[track] + "0090#{@midi_notes[0][i]}60"
 					@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[0][i]}00"
 				end
 			elsif track == 1
-				for i in 1 ... (@midi_notes[track].size - 2)
-					@track_data[track] = @track_data[track] + "0090#{@midi_notes[1][i]}60"
-					@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[1][i]}00"
+				for i in 1 ... (@midi_notes[track].size)
+					if i == 1 # add delay
+						@track_data[track] = @track_data[track] + "#{@tempo}90#{@midi_notes[1][i]}60"
+						@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[1][i]}00"
+					else
+						@track_data[track] = @track_data[track] + "0090#{@midi_notes[1][i]}60"
+						@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[1][i]}00"
+					end
 				end
 			elsif track == 2 
-				for i in 2 ... (@midi_notes[track].size - 1)
-					@track_data[track] = @track_data[track] + "0090#{@midi_notes[2][i]}60"
-					@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[2][i]}00"
+				for i in 2 ... (@midi_notes[track].size)
+					if i == 2 # add delay
+						@track_data[track] = @track_data[track] + "#{@tempo}90#{@midi_notes[1][i]}00" 
+						@track_data[track] = @track_data[track] + "#{@tempo}90#{@midi_notes[1][i]}60"
+						@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[1][i]}00"
+					else
+						@track_data[track] = @track_data[track] + "0090#{@midi_notes[2][i]}60"
+						@track_data[track] = @track_data[track] + "#{@tempo}80#{@midi_notes[2][i]}00"
+					end
 				end
-			end # nil value might be causing holes in the data
+			end 
 
 			# @midi_notes[track].each do |note|
 			# 	# need to figure out a way to start and stop notes
@@ -311,24 +588,9 @@ module Bio
 			num_bytes = "%08X" % (@track_data[track].length/2) # This is not correct
 		end
 
+		def write_all_tracks
+			write_track(0) << write_track(1) << write_track(2)
+		end
 	end
 end
 
-=begin
-
-Notes to self:
-
-Nil values in the note data are causing errors in the midi file.
-Easy solution is to not push nil values into midi_notes in the
-compute_midi_notes method. This will mean that notes wont align 
-as wanted in the output midi file.
-Other solution - for every nil value write a dummy note either in the
-create_midi_notes method or the create_track_data method. Probably
-easier to do in create track data.
-Best solution: Find where the nil values are coming from. If everything
-is working properly they shouldn't be there.	
-
-Problem might also be in the aminoIndex incrementer.
-
-	
-=end
